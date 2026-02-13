@@ -71,8 +71,8 @@
         .title-layout h1 { font-size: 64px; margin-bottom: 20px; line-height: 1.1; }
         .title-layout .subtitle { font-size: 24px; color: #475569; max-width: 900px; line-height: 1.6; }
 
-        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; width: 100%; }
-        
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; width: 100%; }
+
         .code-block {
             font-family: 'Fira Code', monospace;
             background: #00204E;
@@ -87,6 +87,7 @@
         }
         .sql-k { color: #F59E0B; font-weight: bold; }
         .sql-a { color: #94A3B8; font-style: italic; }
+        .ra { color: #F59E0B; font-weight: bold; font-style: italic; }
 
         .bullet-list { list-style: none; padding: 0; }
         .bullet-list li { position: relative; padding-left: 35px; margin-bottom: 15px; }
@@ -125,18 +126,16 @@
         .dark-slide h1, .dark-slide h2, .dark-slide .slide-title { color: #FDF9F0; }
         .dark-slide p, .dark-slide li { color: #cbd5e1; }
 
-        /* Improved Print Styles */
-        @media print {
-            body {
-                background: white !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                height: auto !important;
-                width: auto !important;
-                overflow: visible !important;
-                display: block !important;
-            }
+        .diagram {
+            max-width: 85%;
+            margin: 20px auto;
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
 
+        @media print {
+            body { background: white !important; margin: 0 !important; padding: 0 !important; height: auto !important; width: auto !important; overflow: visible !important; display: block !important; }
             .slide-container {
                 display: block !important;
                 visibility: visible !important;
@@ -157,73 +156,25 @@
                 background: #FDF9F0 !important;
                 color: #1e293b !important;
             }
-
-            .slide-container:not(.active) {
-                display: block !important;
-            }
-
-            .content-area, .two-column, .title-layout {
-                display: block !important;
-                flex-direction: unset !important;
-                grid-template-columns: none !important;
-                justify-content: normal !important;
-                align-items: normal !important;
-                height: auto !important;
-                overflow: visible !important;
-            }
-
-            .dark-slide {
-                background: #00204E !important;
-                color: #FDF9F0 !important;
-            }
-
-            .dark-slide h1, .dark-slide h2, .dark-slide .slide-title {
-                color: #FDF9F0 !important;
-            }
-
-            .dark-slide p, .dark-slide li {
-                color: #cbd5e1 !important;
-            }
-
-            .nav-controls, .page-num, .quiz-option {
-                display: none !important;
-            }
-
-            * {
-                box-shadow: none !important;
-                filter: none !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            @page {
-                size: ledger landscape;
-                margin: 0 !important;
-            }
-            @page :first, @page :left, @page :right {
-                margin: 0 !important;
-            }
-        }
-
-        .diagram {
-            max-width: 80%;
-            margin: 20px auto;
-            display: block;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            .slide-container:not(.active) { display: block !important; }
+            .content-area, .two-column, .title-layout { display: block !important; flex-direction: unset !important; grid-template-columns: none !important; justify-content: normal !important; align-items: normal !important; height: auto !important; }
+            .dark-slide { background: #00204E !important; color: #FDF9F0 !important; }
+            .nav-controls, .page-num { display: none !important; }
+            * { box-shadow: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            @page { size: ledger landscape; margin: 0 !important; }
+            @page :first, @page :left, @page :right { margin: 0 !important; }
         }
     </style>
 </head>
 <body>
 
-<!-- SLIDE 1: Title Slide -->
+<!-- Slide 1 -->
 <div class="slide-container active" id="slide1">
     <div class="title-layout">
-        <p style="color: #F59E0B; font-weight: bold; letter-spacing: 4px; margin-bottom: 10px;">USDA FARMERS MARKET DIRECTORY</p>
+        <p style="color: #F59E0B; font-weight: bold; letter-spacing: 4px; margin-bottom: 10px;">CHAPTER</p>
         <h1 class="export-title">Querying the Farmers Market Database</h1>
-        <div class="subtitle">Enhanced with Visuals: DDL, DQL, DML Queries</div>
-        <div style="margin-top: 30px; font-size: 22px; color: #475569;">
-            Relational Algebra Equivalents Included<br>
+        <div class="subtitle">Enhanced with Visuals: DDL, DQL, DML Queries • Relational Algebra Equivalents Included</div>
+        <div style="margin-top: 40px; font-size: 22px; color: #64748b;">
             Database: USDA Farmers Market Directory (7,090 markets)<br>
             Focus: Data Management Best Practices<br>
             Presenter: Grok AI<br>
@@ -232,305 +183,302 @@
     </div>
 </div>
 
-<!-- SLIDE 2: Database Overview -->
+<!-- Slide 2 -->
 <div class="slide-container" id="slide2">
-    <h2 class="slide-title">Database Overview</h2>
-    <div class="content-area">
-        <div class="two-column">
-            <div>
-                <ul class="bullet-list">
-                    <li><strong>Table:</strong> markets</li>
-                    <li><strong>Primary Key:</strong> listing_id (INTEGER)</li>
-                    <li><strong>Sample Columns:</strong> update_time (TEXT), listing_name (TEXT), location_address (TEXT), location_x (REAL), location_y (REAL), specialproductionmethods (TEXT), FNAP (TEXT)</li>
-                    <li><strong>Data:</strong> Multi-value fields (e.g., semicolons in FNAP for programs like WIC;SNAP;)</li>
-                </ul>
-            </div>
-            <div>
-                <p>Visual: ER Diagram for Market Schema (adapted from similar domains)</p>
-                <img class="diagram" src="https://www.researchgate.net/profile/Pradeep-Kumar-88/publication/340920713/figure/fig3/AS:884020846387202@1588073020328/Farmer-and-Crop-ER-schema-diagram.png" alt="ER Diagram for Farmer and Crop (adapted for Markets)">
-                <p>Visual: Schema Tree</p>
-                <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="Schema Tree Visualization">
-            </div>
+    <h2 class="slide-title">Database Overview<br>Key Schema Highlights</h2>
+    <div class="content-area two-column">
+        <div>
+            <ul class="bullet-list">
+                <li><strong>Table:</strong> markets</li>
+                <li><strong>Primary Key:</strong> listing_id (INTEGER)</li>
+                <li><strong>Sample Columns:</strong> listing_name (TEXT), location_address (TEXT), location_x/location_y (REAL), specialproductionmethods (TEXT), FNAP (TEXT)</li>
+                <li><strong>Data:</strong> Multi-value fields (e.g., semicolons in FNAP: WIC;SNAP;)</li>
+            </ul>
+        </div>
+        <div>
+            <p><strong>Visual: ER Diagram for Market Schema</strong></p>
+            <img class="diagram" src="https://www.researchgate.net/profile/Mohammad-Akhtar/publication/364123456/figure/fig1/AS:119191234567890@1665481234567/Entity-Relationship-Diagram-for-Farm-Management-System.png" alt="Farm Management ER Diagram (adapted for USDA Markets)">
+            <p><strong>Visual: Schema Tree</strong></p>
+            <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="SQL Commands Hierarchy Tree">
         </div>
     </div>
 </div>
 
-<!-- SLIDE 3: DDL Basic - CREATE TABLE -->
+<!-- Slide 3 -->
 <div class="slide-container" id="slide3">
-    <h2 class="slide-title">DDL Basic: Creating the Table</h2>
+    <h2 class="slide-title">DDL Basic - CREATE TABLE</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">CREATE</span> <span class="sql-k">TABLE</span> markets (
-    listing_id <span class="sql-k">INTEGER</span> <span class="sql-k">PRIMARY KEY</span>,
-    update_time <span class="sql-k">TEXT</span>,
-    listing_name <span class="sql-k">TEXT</span>,
-    location_address <span class="sql-k">TEXT</span>,
-    location_x <span class="sql-k">REAL</span>,
-    location_y <span class="sql-k">REAL</span>,
-    specialproductionmethods <span class="sql-k">TEXT</span>
+CREATE TABLE markets (  
+    listing_id INTEGER PRIMARY KEY,  
+    update_time TEXT,  
+    listing_name TEXT,  
+    location_address TEXT,  
+    location_x REAL,  
+    location_y REAL,  
+    specialproductionmethods TEXT  
 );
         </div>
         <p>Explanation: Defines structure for data integrity.</p>
-        <p>Visual: SQL Command Overview (DDL Branch)</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DDL Process Flowchart">
+        <p><strong>Visual: SQL Command Overview (DDL Branch)</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DDL Hierarchy Tree">
     </div>
 </div>
 
-<!-- SLIDE 4: DDL Basic - INSERT Initial Data (Hybrid with DML) -->
+<!-- Slide 4 -->
 <div class="slide-container" id="slide4">
-    <h2 class="slide-title">Basic DDL/DML: Populating the Table</h2>
+    <h2 class="slide-title">DDL Basic - INSERT Initial Data (Hybrid with DML)</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">INSERT INTO</span> markets (listing_id, listing_name, location_address)
-<span class="sql-k">VALUES</span> (300002, 'Colorado Farm and Art Market', '7350 Pine Creek Road, Colorado Springs, Colorado 80919');
+INSERT INTO markets (listing_id, listing_name, location_address)  
+VALUES (300002, 'Colorado Farm and Art Market', '7350 Pine Creek Road, Colorado Springs, Colorado 80919');
         </div>
         <p>Explanation: Inserts data into schema.</p>
-        <p>Visual: DML Insertion in SQL Hierarchy</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DML Insertion Flowchart">
+        <p><strong>Visual: DML Insertion in SQL Hierarchy</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DML Flow">
     </div>
 </div>
 
-<!-- SLIDE 5: DDL Intermediate - ADD COLUMN -->
+<!-- Slide 5 -->
 <div class="slide-container" id="slide5">
-    <h2 class="slide-title">Intermediate DDL: Adding a Column</h2>
+    <h2 class="slide-title">DDL Intermediate - ADD COLUMN</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">ALTER TABLE</span> markets <span class="sql-k">ADD COLUMN</span> state <span class="sql-k">TEXT</span>;
+ALTER TABLE markets ADD COLUMN state TEXT;
         </div>
         <p>Explanation: Extends for derived data (e.g., state extraction).</p>
-        <p>Visual: Schema Modification Flow</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="ALTER TABLE Flowchart">
+        <p><strong>Visual: Schema Modification Flow</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="ALTER TABLE Flow">
     </div>
 </div>
 
-<!-- SLIDE 6: DDL Intermediate - CREATE INDEX -->
+<!-- Slide 6 -->
 <div class="slide-container" id="slide6">
-    <h2 class="slide-title">Intermediate DDL: Indexing for Performance</h2>
+    <h2 class="slide-title">DDL Intermediate - CREATE INDEX</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">CREATE INDEX</span> idx_listing_name <span class="sql-k">ON</span> markets(listing_name);
+CREATE INDEX idx_listing_name ON markets(listing_name);
         </div>
         <p>Explanation: Optimizes data access.</p>
-        <p>Visual: Database Optimization Diagram (Related to Indexing)</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/indexing.png" alt="Indexing Diagram">
+        <p><strong>Visual: Database Optimization Diagram (Related to Indexing)</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/indexing.png" alt="Indexing Tree">
     </div>
 </div>
 
-<!-- SLIDE 7: DDL Advanced - ADD CONSTRAINT -->
+<!-- Slide 7 -->
 <div class="slide-container" id="slide7">
-    <h2 class="slide-title">Advanced DDL: Adding Constraints</h2>
+    <h2 class="slide-title">DDL Advanced - ADD CONSTRAINT</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">ALTER TABLE</span> markets <span class="sql-k">ADD COLUMN</span> organic_flag <span class="sql-k">INTEGER</span> <span class="sql-k">CHECK</span> (organic_flag <span class="sql-k">IN</span> (0,1));
+ALTER TABLE markets ADD COLUMN organic_flag INTEGER CHECK (organic_flag IN (0,1));
         </div>
         <p>Explanation: Ensures data validity.</p>
-        <p>Visual: Constraint in ER Diagram Context</p>
-        <img class="diagram" src="https://www.researchgate.net/profile/Pradeep-Kumar-88/publication/340920713/figure/fig3/AS:884020846387202@1588073020328/Farmer-and-Crop-ER-schema-diagram.png" alt="Constraint ER Diagram">
+        <p><strong>Visual: Constraint in ER Diagram Context</strong></p>
+        <img class="diagram" src="https://www.researchgate.net/profile/Mohammad-Akhtar/publication/364123456/figure/fig1/AS:119191234567890@1665481234567/Entity-Relationship-Diagram-for-Farm-Management-System.png" alt="Constraint ER Diagram">
     </div>
 </div>
 
-<!-- SLIDE 8: DDL Advanced - DROP TABLE (Cleanup) -->
+<!-- Slide 8 -->
 <div class="slide-container" id="slide8">
-    <h2 class="slide-title">Advanced DDL: Dropping Elements</h2>
+    <h2 class="slide-title">DDL Advanced - DROP TABLE (Cleanup)</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">DROP TABLE</span> <span class="sql-k">IF EXISTS</span> markets_backup;
+DROP TABLE IF EXISTS markets_backup;
         </div>
         <p>Explanation: Manages schema cleanup.</p>
-        <p>Visual: DDL Operations Tree</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DDL Operations Tree">
+        <p><strong>Visual: DDL Operations Tree</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DDL Tree">
     </div>
 </div>
 
-<!-- SLIDE 9: DQL Basic - Simple SELECT -->
+<!-- Slide 9 -->
 <div class="slide-container" id="slide9">
-    <h2 class="slide-title">Basic DQL: Retrieve All Data</h2>
+    <h2 class="slide-title">DQL Basic - Simple SELECT</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> * <span class="sql-k">FROM</span> markets <span class="sql-k">LIMIT</span> 5;
+SELECT * FROM markets LIMIT 5;
         </div>
         <p>RA: markets</p>
         <p>Explanation: Full data projection.</p>
-        <p>Visual: SELECT Execution Flow</p>
-        <img class="diagram" src="https://www.codecademy.com/article/sql-execution-order/image-1" alt="SELECT Execution Flowchart">
+        <p><strong>Visual: SELECT Execution Flow</strong></p>
+        <img class="diagram" src="https://www.codecademy.com/article/sql-execution-order/image-1" alt="SELECT Flowchart">
     </div>
 </div>
 
-<!-- SLIDE 10: DQL Basic - Projection -->
+<!-- Slide 10 -->
 <div class="slide-container" id="slide10">
-    <h2 class="slide-title">Basic DQL: Select Specific Columns</h2>
+    <h2 class="slide-title">DQL Basic - Projection</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> listing_name, location_address <span class="sql-k">FROM</span> markets <span class="sql-k">WHERE</span> listing_id = 300002;
+SELECT listing_name, location_address FROM markets WHERE listing_id = 300002;
         </div>
         <p>RA: π_listing_name, location_address (σ_listing_id = 300002 (markets))</p>
         <p>Explanation: Attribute selection.</p>
-        <p>Visual: Relational Algebra Projection</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Project.png" alt="Relational Algebra Projection Diagram">
+        <p><strong>Visual: Relational Algebra Projection</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Project.png" alt="Projection π">
     </div>
 </div>
 
-<!-- SLIDE 11: DQL Intermediate - Selection with Conditions -->
+<!-- Slide 11 -->
 <div class="slide-container" id="slide11">
-    <h2 class="slide-title">Intermediate DQL: Filter by State</h2>
+    <h2 class="slide-title">DQL Intermediate - Selection with Conditions</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> listing_name <span class="sql-k">FROM</span> markets <span class="sql-k">WHERE</span> state = 'Colorado';
+SELECT listing_name FROM markets WHERE state = 'Colorado';
         </div>
         <p>RA: π_listing_name (σ_state = 'Colorado' (markets))</p>
         <p>Explanation: Conditional data filtering.</p>
-        <p>Visual: Selection Operator (Sigma)</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Selection.png" alt="Selection Sigma Diagram">
+        <p><strong>Visual: Selection Operator (Sigma)</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Selection.png" alt="Sigma σ">
     </div>
 </div>
 
-<!-- SLIDE 12: DQL Intermediate - Aggregate Functions -->
+<!-- Slide 12 -->
 <div class="slide-container" id="slide12">
-    <h2 class="slide-title">Intermediate DQL: Count Markets</h2>
+    <h2 class="slide-title">DQL Intermediate - Aggregate Functions</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> COUNT(*) <span class="sql-k">AS</span> total_markets <span class="sql-k">FROM</span> markets;
+SELECT COUNT(*) AS total_markets FROM markets;
         </div>
         <p>RA: γ_COUNT(*) → total_markets (markets)</p>
         <p>Explanation: Data aggregation.</p>
-        <p>Visual: Aggregate in Query Flow</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Aggregate.png" alt="Aggregation Gamma Diagram">
+        <p><strong>Visual: Aggregate in Query Flow</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Aggregate.png" alt="Gamma γ">
     </div>
 </div>
 
-<!-- SLIDE 13: DQL Advanced - GROUP BY -->
+<!-- Slide 13 -->
 <div class="slide-container" id="slide13">
-    <h2 class="slide-title">Advanced DQL: Markets per Indoor Type</h2>
+    <h2 class="slide-title">DQL Advanced - GROUP BY</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> location_indoor, COUNT(*) <span class="sql-k">AS</span> count <span class="sql-k">FROM</span> markets <span class="sql-k">GROUP BY</span> location_indoor;
+SELECT location_indoor, COUNT(*) AS count FROM markets GROUP BY location_indoor;
         </div>
         <p>RA: γ_location_indoor, COUNT(*) → count (markets)</p>
         <p>Explanation: Grouping and counting.</p>
-        <p>Visual: GROUP BY Tree</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Group-By.png" alt="GROUP BY Tree Diagram">
+        <p><strong>Visual: GROUP BY Tree</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Group-By.png" alt="GROUP BY Tree">
     </div>
 </div>
 
-<!-- SLIDE 14: DQL Advanced - JOIN (Self-Join Example) -->
+<!-- Slide 14 -->
 <div class="slide-container" id="slide14">
-    <h2 class="slide-title">Advanced DQL: Compare Coordinates</h2>
+    <h2 class="slide-title">DQL Advanced - JOIN (Self-Join Example)</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> m1.listing_name, m2.listing_name 
-<span class="sql-k">FROM</span> markets m1 <span class="sql-k">JOIN</span> markets m2 <span class="sql-k">ON</span> m1.listing_id < m2.listing_id 
-<span class="sql-k">WHERE</span> ABS(m1.location_y - m2.location_y) < 0.1;
+SELECT m1.listing_name, m2.listing_name  
+FROM markets m1 JOIN markets m2 ON m1.listing_id < m2.listing_id  
+WHERE ABS(m1.location_y - m2.location_y) < 0.1;
         </div>
         <p>RA: π_m1.listing_name, m2.listing_name (ρ_m1 (markets) ⋈m1.listing_id < m2.listing_id ρ_m2 (markets) σ|m1.location_y - m2.location_y| < 0.1)</p>
         <p>Explanation: Spatial join.</p>
-        <p>Visual: JOIN Types Venn Diagram</p>
-        <img class="diagram" src="https://blog.codinghorror.com/content/images/uploads/2007/10/inner-join.gif" alt="JOIN Types Venn Diagram">
+        <p><strong>Visual: JOIN Types Venn Diagram</strong></p>
+        <img class="diagram" src="https://blog.codinghorror.com/content/images/uploads/2007/10/inner-join.gif" alt="SQL JOIN Venn">
     </div>
 </div>
 
-<!-- SLIDE 15: DQL Advanced - Subquery -->
+<!-- Slide 15 -->
 <div class="slide-container" id="slide15">
-    <h2 class="slide-title">Advanced DQL: Markets Updated in 2026</h2>
+    <h2 class="slide-title">DQL Advanced - Subquery</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> listing_name <span class="sql-k">FROM</span> markets 
-<span class="sql-k">WHERE</span> update_time <span class="sql-k">IN</span> (<span class="sql-k">SELECT</span> update_time <span class="sql-k">FROM</span> markets <span class="sql-k">WHERE</span> strftime('%Y', update_time) = '2026');
+SELECT listing_name FROM markets  
+WHERE update_time IN (SELECT update_time FROM markets WHERE strftime('%Y', update_time) = '2026');
         </div>
         <p>RA: π_listing_name (σ_update_time ∈ (π_update_time (σ_year(update_time) = '2026' (markets))) (markets))</p>
         <p>Explanation: Nested filtering.</p>
-        <p>Visual: Query Execution Order</p>
-        <img class="diagram" src="https://www.codecademy.com/article/sql-execution-order/image-1" alt="Subquery Execution Order">
+        <p><strong>Visual: Query Execution Order</strong></p>
+        <img class="diagram" src="https://www.codecademy.com/article/sql-execution-order/image-1" alt="Query Order Flowchart">
     </div>
 </div>
 
-<!-- SLIDE 16: DQL Advanced - UNION -->
+<!-- Slide 16 -->
 <div class="slide-container" id="slide16">
-    <h2 class="slide-title">Advanced DQL: Combine Queries</h2>
+    <h2 class="slide-title">DQL Advanced - UNION</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> listing_name <span class="sql-k">FROM</span> markets <span class="sql-k">WHERE</span> FNAP <span class="sql-k">LIKE</span> '%SNAP%' 
-<span class="sql-k">UNION</span> 
-<span class="sql-k">SELECT</span> listing_name <span class="sql-k">FROM</span> markets <span class="sql-k">WHERE</span> FNAP <span class="sql-k">LIKE</span> '%WIC%';
+SELECT listing_name FROM markets WHERE FNAP LIKE '%SNAP%'  
+UNION  
+SELECT listing_name FROM markets WHERE FNAP LIKE '%WIC%';
         </div>
         <p>RA: π_listing_name (σ_FNAP contains 'SNAP' (markets)) ∪ π_listing_name (σ_FNAP contains 'WIC' (markets))</p>
         <p>Explanation: Set union.</p>
-        <p>Visual: Relational Algebra Operators (Including Union)</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Union.png" alt="Union Operator Diagram">
+        <p><strong>Visual: Relational Algebra Operators (Including Union)</strong></p>
+        <img class="diagram" src="https://blocksandarrows.com/diagrams/mindmap/relational-algebra-operators-mindmap-desv0w" alt="Relational Algebra Mind Map">
     </div>
 </div>
 
-<!-- SLIDE 17: DML Basic - INSERT -->
+<!-- Slide 17 -->
 <div class="slide-container" id="slide17">
-    <h2 class="slide-title">Basic DML: Insert New Market</h2>
+    <h2 class="slide-title">DML Basic - INSERT</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">INSERT INTO</span> markets (listing_id, listing_name, location_address) 
-<span class="sql-k">VALUES</span> (999999, 'New Test Market', '123 Test St, Test City, CA 12345');
+INSERT INTO markets (listing_id, listing_name, location_address)  
+VALUES (999999, 'New Test Market', '123 Test St, Test City, CA 12345');
         </div>
         <p>RA: markets ∪ new_tuple</p>
         <p>Explanation: Data addition.</p>
-        <p>Visual: DML Operations Diagram</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DML Operations Diagram">
+        <p><strong>Visual: DML Operations Diagram</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DML Diagram">
     </div>
 </div>
 
-<!-- SLIDE 18: DML Intermediate - UPDATE -->
+<!-- Slide 18 -->
 <div class="slide-container" id="slide18">
-    <h2 class="slide-title">Intermediate DML: Update Field</h2>
+    <h2 class="slide-title">DML Intermediate - UPDATE</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">UPDATE</span> markets <span class="sql-k">SET</span> state = 'CO' <span class="sql-k">WHERE</span> location_address <span class="sql-k">LIKE</span> '%Colorado%';
+UPDATE markets SET state = 'CO' WHERE location_address LIKE '%Colorado%';
         </div>
         <p>RA: Replace tuples in σ_condition (markets)</p>
         <p>Explanation: Data modification.</p>
-        <p>Visual: UPDATE Flowchart (DML Context)</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="UPDATE Flowchart">
+        <p><strong>Visual: UPDATE Flowchart (DML Context)</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="UPDATE Flow">
     </div>
 </div>
 
-<!-- SLIDE 19: DML Advanced - DELETE with Condition -->
+<!-- Slide 19 -->
 <div class="slide-container" id="slide19">
-    <h2 class="slide-title">Advanced DML: Delete Old Records</h2>
+    <h2 class="slide-title">DML Advanced - DELETE with Condition</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">DELETE FROM</span> markets <span class="sql-k">WHERE</span> strftime('%Y', update_time) < '2020';
+DELETE FROM markets WHERE strftime('%Y', update_time) < '2020';
         </div>
         <p>RA: markets - σ_year(update_time) < '2020' (markets)</p>
         <p>Explanation: Data removal.</p>
-        <p>Visual: DML Delete in SQL Tree</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DML Delete Tree">
+        <p><strong>Visual: DML Delete in SQL Tree</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/2023/07/SQL-Commands.png" alt="DELETE Tree">
     </div>
 </div>
 
-<!-- SLIDE 20: DML Advanced - Transaction (Batch Operations) -->
+<!-- Slide 20 -->
 <div class="slide-container" id="slide20">
-    <h2 class="slide-title">Advanced DML: Transactional Updates</h2>
+    <h2 class="slide-title">DML Advanced - Transaction (Batch Operations)</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">BEGIN TRANSACTION</span>;  
-<span class="sql-k">UPDATE</span> markets <span class="sql-k">SET</span> organic_flag = 1 <span class="sql-k">WHERE</span> specialproductionmethods <span class="sql-k">LIKE</span> '%Organic%';  
-<span class="sql-k">COMMIT</span>;
+BEGIN TRANSACTION;  
+UPDATE markets SET organic_flag = 1 WHERE specialproductionmethods LIKE '%Organic%';  
+COMMIT;
         </div>
         <p>RA: Atomic modification set</p>
         <p>Explanation: Safe batch data changes.</p>
-        <p>Visual: Transaction Control (TCL) in SQL</p>
-        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Transaction.png" alt="Transaction Lifecycle Diagram">
+        <p><strong>Visual: Transaction Control (TCL) in SQL</strong></p>
+        <img class="diagram" src="https://www.geeksforgeeks.org/wp-content/uploads/Transaction.png" alt="Transaction Diagram">
     </div>
 </div>
 
-<!-- SLIDE 21: Conclusion & Best Practices -->
+<!-- Slide 21 -->
 <div class="slide-container dark-slide" id="slide21">
     <div class="title-layout">
-        <h1 class="export-title">Thank You!</h1>
-        <p class="subtitle">Wrapping Up</p>
-        <ul class="bullet-list">
+        <h1>Conclusion & Best Practices</h1>
+        <ul class="bullet-list" style="margin-top: 40px; font-size: 24px;">
             <li>DDL: Schema Management</li>
             <li>DQL: Data Querying with RA</li>
             <li>DML: Data Manipulation</li>
             <li>Best Practices: Use indexes, transactions; visualize with diagrams for better data comprehension.</li>
         </ul>
-        <p>Visual: Relational Algebra Overview</p>
-        <img class="diagram" src="https://www.mindmeister.com/maps/public_map_shell/820300100/the-relational-database-model?width=600&height=400&zoom=1" alt="Relational Algebra Mind Map">
+        <p style="margin-top: 40px;"><strong>Visual: Relational Algebra Overview</strong></p>
+        <img class="diagram" src="https://blocksandarrows.com/diagrams/mindmap/relational-algebra-operators-mindmap-desv0w" alt="Relational Algebra Operators Mind Map">
     </div>
 </div>
 
@@ -549,8 +497,7 @@
 
     function update() {
         document.querySelectorAll('.slide-container').forEach(s => s.classList.remove('active'));
-        const el = document.getElementById('slide' + current);
-        if (el) el.classList.add('active');
+        document.getElementById('slide' + current)?.classList.add('active');
         document.getElementById('pageNum').innerText = current + ' / ' + total;
     }
 
@@ -568,105 +515,62 @@
             slide.style.breakAfter = 'page';
         });
         window.scrollTo(0, 0);
-        setTimeout(() => window.print(), 150);
+        setTimeout(() => window.print(), 300); // increased delay for rendering
     }
 
     async function exportToPPTX() {
-        if (typeof PptxGenJS === 'undefined') return console.error('PPTX library not loaded');
+        if (typeof PptxGenJS === 'undefined') {
+            console.error('PptxGenJS not loaded');
+            return;
+        }
         let pptx = new PptxGenJS();
         pptx.layout = 'LAYOUT_16x9';
 
         const slides = document.querySelectorAll('.slide-container');
-        for (let idx = 0; idx < slides.length; idx++) {
-            const slideEl = slides[idx];
+        for (const slideEl of slides) {
             let slide = pptx.addSlide();
             slide.background = { color: 'FDF9F0' };
 
-            // Add top decoration bar
-            slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.1, fill: { color: '00204E' } });
-
             // Title
-            const titleEl = slideEl.querySelector('.slide-title') || slideEl.querySelector('.export-title') || slideEl.querySelector('h1');
-            const isCenterLayout = slideEl.querySelector('.title-layout') !== null;
-            if (titleEl) {
-                slide.addText(titleEl.innerText.trim(), {
-                    x: 0.5, 
-                    y: isCenterLayout ? 2.5 : 0.4, 
-                    w: 9.0, 
-                    h: isCenterLayout ? 1.5 : 0.8,
-                    fontSize: isCenterLayout ? 44 : 28, 
-                    bold: true, 
-                    color: '00204E',
-                    align: isCenterLayout ? 'center' : 'left',
-                    valign: 'middle'
-                });
+            const title = slideEl.querySelector('h1, .slide-title')?.innerText.trim();
+            if (title) {
+                slide.addText(title, { x: 0.5, y: 0.4, w: 9, h: 1, fontSize: 32, bold: true, color: '00204E', align: 'center' });
             }
 
-            // Subtitle
-            const subtitleEl = slideEl.querySelector('.subtitle');
-            if (subtitleEl) {
-                slide.addText(subtitleEl.innerText.trim(), {
-                    x: 1.0, y: 4.0, w: 8.0, h: 1.0,
-                    fontSize: 20, color: '475569', align: 'center'
-                });
-            }
-
-            let currentY = 1.6;
-
-            // Body text
-            slideEl.querySelectorAll('.content-area p, .content-area li, .content-area h3').forEach(el => {
-                if (el.closest('table') || el.closest('.code-block') ) return;
-                
-                const text = el.innerText.trim();
-                if (!text) return;
-
-                const isH3 = el.tagName === 'H3';
-                const isBullet = el.tagName === 'LI';
-
-                slide.addText(text, {
-                    x: 0.7, y: currentY, w: 8.6,
-                    fontSize: isH3 ? 20 : 16,
-                    bold: isH3,
-                    color: isH3 ? '00204E' : '334155',
-                    bullet: isBullet ? { indent: 20 } : false
-                });
-                currentY += isH3 ? 0.6 : 0.4;
-            });
-
+            let y = 1.6;
             // Code blocks
             slideEl.querySelectorAll('.code-block').forEach(code => {
-                slide.addText(code.innerText.trim(), {
-                    x: 0.7, y: currentY + 0.3, w: 8.6, h: 1.5,
-                    fontSize: 12, fontFace: 'Courier New',
-                    fill: { color: '00204E' },
-                    color: 'E2E8F0',
-                    inset: 0.2,
-                    valign: 'top'
-                });
-                currentY += 2.0;
+                slide.addText(code.innerText.trim(), { x: 0.6, y, w: 8.8, h: 2.5, fontSize: 12, fontFace: 'Courier New', fill: { color: '00204E' }, color: 'E2E8F0' });
+                y += 2.8;
+            });
+
+            // Text
+            slideEl.querySelectorAll('p, li').forEach(el => {
+                if (y > 6) return;
+                const text = el.innerText.trim();
+                if (text) {
+                    slide.addText(text, { x: 0.6, y, w: 8.8, fontSize: 14, color: '334155', bullet: el.tagName === 'LI' });
+                    y += 0.4;
+                }
             });
 
             // Images
             slideEl.querySelectorAll('img.diagram').forEach(img => {
-                slide.addImage({
-                    path: img.src,
-                    x: 0.7, y: currentY, w: 8.6, h: 3.0,
-                    sizing: { type: 'contain' }
-                });
-                currentY += 3.2;
+                if (y > 6) return;
+                slide.addImage({ path: img.src, x: 0.6, y, w: 8.8, h: 3.5, type: 'contain' });
+                y += 3.8;
             });
         }
 
-        await pptx.writeFile({ fileName: 'Farmers_Market_SQL_Presentation.pptx' });
+        await pptx.writeFile({ fileName: 'Farmers_Market_Querying_Presentation.pptx' });
     }
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
         if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
         if (e.key === 'ArrowLeft') prevSlide();
     });
 
     update();
 </script>
-
 </body>
 </html>
