@@ -204,345 +204,410 @@
 </head>
 <body>
 
-<!-- SLIDE 1 -->
+<!-- SLIDE 1: Title Slide -->
 <div class="slide-container active" id="slide1">
     <div class="title-layout">
-        <p style="color: #F59E0B; font-weight: bold; letter-spacing: 4px; margin-bottom: 10px;">USDA FARMERS MARKET DIRECTORY</p>
+        <p style="color: #F59E0B; font-weight: bold; letter-spacing: 4px; margin-bottom: 10px;">CHAPTER 5</p>
         <h1 class="export-title">Querying the Farmers Market Database</h1>
         <div class="subtitle">Enhanced with Visuals: DDL, DQL, DML Queries</div>
-        <div style="margin-top: 30px; font-size: 22px; color: #475569;">
-            Relational Algebra Equivalents Included<br>
-            Database: USDA Farmers Market Directory (7,090 markets)<br>
-            Focus: Data Management Best Practices<br>
-            Presenter: Grok AI<br>
-            Date: February 13, 2026
+        <div style="margin-top: 50px; font-size: 20px; color: #64748b; font-style: italic;">
+            Relational Algebra Equivalents Included
         </div>
     </div>
 </div>
 
-<!-- SLIDE 2 -->
+<!-- SLIDE 2: Database Overview -->
 <div class="slide-container" id="slide2">
-    <h2 class="slide-title">Database Overview</h2>
+    <h2 class="slide-title">Database Overview & Key Schema Highlights</h2>
     <div class="content-area">
         <div class="two-column">
+            <ul class="bullet-list">
+                <li><strong>Table:</strong> markets</li>
+                <li><strong>Primary Key:</strong> listing_id (INTEGER)</li>
+                <li><strong>Sample Columns:</strong> listing_name (TEXT), location_address (TEXT), location_x/location_y (REAL), specialproductionmethods (TEXT), FNAP (TEXT)</li>
+                <li><strong>Data:</strong> Multi-value fields (e.g., semicolons in FNAP for programs like WIC;SNAP;)</li>
+            </ul>
             <div>
-                <ul class="bullet-list">
-                    <li><strong>Table:</strong> markets</li>
-                    <li><strong>Primary Key:</strong> listing_id (INTEGER)</li>
-                    <li><strong>Sample Columns:</strong> update_time (TEXT), listing_name (TEXT), location_address (TEXT), location_x (REAL), location_y (REAL), specialproductionmethods (TEXT), FNAP (TEXT)</li>
-                    <li><strong>Data:</strong> Multi-value fields (semicolon-separated in FNAP and specialproductionmethods)</li>
-                </ul>
+                <p><strong>Explanation:</strong> The schema captures market locations, production methods, and accepted programs. Multi-value fields require string parsing for analysis.</p>
             </div>
-            <div>
-                <p><strong>Explanation:</strong> The USDA dataset contains ~7,000 farmers markets with location, programs accepted (FNAP), production methods, and more. Multi-value fields require string pattern matching (LIKE '%value%').</p>
-            </div>
+        </div>
+        <div class="exercise">
+            <strong>Exercise:</strong> Describe how you would add a column for derived state from location_address.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 3 -->
+<!-- SLIDE 3: DDL Basic - CREATE TABLE -->
 <div class="slide-container" id="slide3">
     <h2 class="slide-title">DDL Basic: Creating the Table</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">CREATE TABLE</span> markets (
-    listing_id <span class="sql-k">INTEGER PRIMARY KEY</span>,
-    update_time <span class="sql-k">TEXT</span>,
-    listing_name <span class="sql-k">TEXT</span>,
-    location_address <span class="sql-k">TEXT</span>,
-    location_x <span class="sql-k">REAL</span>,
-    location_y <span class="sql-k">REAL</span>,
-    specialproductionmethods <span class="sql-k">TEXT</span>
+CREATE TABLE markets (  
+    listing_id INTEGER PRIMARY KEY,  
+    update_time TEXT,  
+    listing_name TEXT,  
+    location_address TEXT,  
+    location_x REAL,  
+    location_y REAL,  
+    specialproductionmethods TEXT  
 );
         </div>
-        <p><strong>Explanation:</strong> Creates the base table structure. Primary key ensures unique market IDs. TEXT for strings, REAL for coordinates.</p>
+        <p><strong>Explanation:</strong> Defines the core structure with primary key and basic data types for efficiency and integrity.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Add columns <code>state TEXT</code> and <code>accept_snap INTEGER</code> right after creation using ALTER TABLE.
+            <strong>Exercise:</strong> Modify the CREATE to include FNAP TEXT and add a NOT NULL constraint on listing_name.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 4 -->
+<!-- SLIDE 4: DDL Basic - INSERT Initial Data (Hybrid with DML) -->
 <div class="slide-container" id="slide4">
     <h2 class="slide-title">Basic DDL/DML: Populating the Table</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">INSERT INTO</span> markets (listing_id, listing_name, location_address)
-<span class="sql-k">VALUES</span> (300002, 'Colorado Farm and Art Market', '7350 Pine Creek Road, Colorado Springs, Colorado 80919');
+INSERT INTO markets (listing_id, listing_name, location_address)  
+VALUES (300002, 'Colorado Farm and Art Market', '7350 Pine Creek Road, Colorado Springs, Colorado 80919');
         </div>
-        <p><strong>Explanation:</strong> Adds one market record. In real ETL you would load thousands of rows from CSV.</p>
+        <p><strong>Explanation:</strong> Inserts a single row. For bulk data from CSV, use LOAD DATA or COPY commands in production.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Write INSERT statements for the next three markets from the sample CSV (listing_id 300003–300005).
+            <strong>Exercise:</strong> Write an INSERT for a market with FNAP = 'WIC;SNAP;' and specialproductionmethods = 'Organic;'.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 5 -->
+<!-- SLIDE 5: DDL Intermediate - ADD COLUMN -->
 <div class="slide-container" id="slide5">
     <h2 class="slide-title">Intermediate DDL: Adding a Column</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">ALTER TABLE</span> markets <span class="sql-k">ADD COLUMN</span> state <span class="sql-k">TEXT</span>;
+ALTER TABLE markets ADD COLUMN state TEXT;
         </div>
-        <p><strong>Explanation:</strong> Lets you later derive state from address or add new attributes without recreating table.</p>
+        <p><strong>Explanation:</strong> Allows adding derived data without dropping/recreating the table, preserving existing records.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Add columns <code>has_organic INTEGER</code> and <code>last_updated_year INTEGER</code>. Then write an UPDATE statement to populate last_updated_year from update_time.
+            <strong>Exercise:</strong> Add a column distance_to_reference REAL, then explain how you'd populate it later.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 6 -->
+<!-- SLIDE 6: DDL Intermediate - CREATE INDEX -->
 <div class="slide-container" id="slide6">
     <h2 class="slide-title">Intermediate DDL: Indexing for Performance</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">CREATE INDEX</span> idx_listing_name <span class="sql-k">ON</span> markets(listing_name);
+CREATE INDEX idx_listing_name ON markets(listing_name);
         </div>
-        <p><strong>Explanation:</strong> Speeds up searches and sorts on listing_name (e.g., WHERE listing_name LIKE '%Farm%').</p>
+        <p><strong>Explanation:</strong> Accelerates queries filtering or sorting on listing_name, especially useful for large datasets like 7,090 markets.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Create indexes on <code>location_x</code>, <code>location_y</code> and <code>update_time</code>. Explain why these columns might benefit from indexing.
+            <strong>Exercise:</strong> Create a composite index on location_x and location_y for spatial queries.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 7 -->
+<!-- SLIDE 7: DDL Advanced - ADD CONSTRAINT -->
 <div class="slide-container" id="slide7">
     <h2 class="slide-title">Advanced DDL: Adding Constraints</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">ALTER TABLE</span> markets <span class="sql-k">ADD COLUMN</span> organic_flag <span class="sql-k">INTEGER CHECK</span> (organic_flag <span class="sql-k">IN</span> (0,1));
+ALTER TABLE markets ADD COLUMN organic_flag INTEGER CHECK (organic_flag IN (0,1));
         </div>
-        <p><strong>Explanation:</strong> Enforces that organic_flag can only be 0 or 1 (boolean-like). Prevents invalid data entry.</p>
+        <p><strong>Explanation:</strong> Restricts organic_flag to valid values, preventing data errors at insertion time.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Add a CHECK constraint so latitude (location_y) must be between 24 and 50 (continental US range).
+            <strong>Exercise:</strong> Add a CHECK on location_y to ensure it's within US latitude range (24-49).
         </div>
     </div>
 </div>
 
-<!-- SLIDE 8 -->
+<!-- SLIDE 8: DDL Advanced - DROP TABLE (Cleanup) -->
 <div class="slide-container" id="slide8">
     <h2 class="slide-title">Advanced DDL: Dropping Elements</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">DROP TABLE IF EXISTS</span> markets_backup;
+DROP TABLE IF EXISTS markets_backup;
         </div>
-        <p><strong>Explanation:</strong> Safely removes backup or test tables without error if they don't exist.</p>
+        <p><strong>Explanation:</strong> Cleans up temporary tables. IF EXISTS avoids errors if table doesn't exist.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Write a DROP INDEX statement for idx_listing_name, then explain why you might want to drop an index.
+            <strong>Exercise:</strong> Drop the index idx_listing_name, then recreate it as a unique index if appropriate.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 9 -->
+<!-- SLIDE 9: DQL Basic - Simple SELECT -->
 <div class="slide-container" id="slide9">
     <h2 class="slide-title">Basic DQL: Retrieve All Data</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> * <span class="sql-k">FROM</span> markets <span class="sql-k">LIMIT</span> 5;
+SELECT * FROM markets LIMIT 5;
         </div>
-        <p><strong>Explanation:</strong> Shows first 5 rows to inspect data structure and sample values quickly.</p>
+        <p>RA: markets</p>
+        <p><strong>Explanation:</strong> Retrieves sample data for inspection; LIMIT prevents overwhelming output.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Modify to show only markets where location_address contains 'New York'.
+            <strong>Exercise:</strong> Run SELECT COUNT(*) FROM markets; to verify ~7,090 records.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 10 -->
+<!-- SLIDE 10: DQL Basic - Projection -->
 <div class="slide-container" id="slide10">
     <h2 class="slide-title">Basic DQL: Select Specific Columns</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> listing_name, location_address 
-<span class="sql-k">FROM</span> markets 
-<span class="sql-k">WHERE</span> listing_id = 300002;
+SELECT listing_name, location_address FROM markets WHERE listing_id = 300002;
         </div>
-        <p><strong>Explanation:</strong> Focuses on useful columns instead of dumping everything.</p>
+        <p>RA: π_listing_name, location_address (σ_listing_id = 300002 (markets))</p>
+        <p><strong>Explanation:</strong> Projects only needed columns, reducing data transfer.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Show listing_name and FNAP for all markets in Colorado (parse from address).
+            <strong>Exercise:</strong> Select listing_name and FNAP for the first 10 markets.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 11 -->
+<!-- SLIDE 11: DQL Intermediate - Selection with Conditions -->
 <div class="slide-container" id="slide11">
     <h2 class="slide-title">Intermediate DQL: Filter by State</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> listing_name 
-<span class="sql-k">FROM</span> markets 
-<span class="sql-k">WHERE</span> state = 'Colorado';
+SELECT listing_name FROM markets WHERE state = 'Colorado';
         </div>
-        <p><strong>Explanation:</strong> Assumes state column already exists or was derived.</p>
+        <p>RA: π_listing_name (σ_state = 'Colorado' (markets))</p>
+        <p><strong>Explanation:</strong> Filters to Colorado markets; assumes state derived from address.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Write a query to find all markets that mention both "Organic" and "Grass Fed" in specialproductionmethods.
+            <strong>Exercise:</strong> Filter markets where FNAP contains both 'WIC' and 'SNAP'.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 12 -->
+<!-- SLIDE 12: DQL Intermediate - Aggregate Functions -->
 <div class="slide-container" id="slide12">
     <h2 class="slide-title">Intermediate DQL: Count Markets</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> COUNT(*) <span class="sql-k">AS</span> total_markets 
-<span class="sql-k">FROM</span> markets;
+SELECT COUNT(*) AS total_markets FROM markets;
         </div>
-        <p><strong>Explanation:</strong> Gives quick total count of records in the table.</p>
+        <p>RA: γ_COUNT(*) → total_markets (markets)</p>
+        <p><strong>Explanation:</strong> Computes total number of markets in the directory (~7,090).</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Count how many markets accept SNAP (FNAP contains 'SNAP').
+            <strong>Exercise:</strong> Count markets where specialproductionmethods contains 'Organic'.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 13 -->
+<!-- SLIDE 13: DQL Advanced - GROUP BY -->
 <div class="slide-container" id="slide13">
     <h2 class="slide-title">Advanced DQL: Markets per Indoor Type</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> location_indoor, COUNT(*) <span class="sql-k">AS</span> count 
-<span class="sql-k">FROM</span> markets 
-<span class="sql-k">GROUP BY</span> location_indoor;
+SELECT location_indoor, COUNT(*) AS count FROM markets GROUP BY location_indoor;
         </div>
-        <p><strong>Explanation:</strong> Shows distribution of indoor vs outdoor markets.</p>
+        <p>RA: γ_location_indoor, COUNT(*) → count (markets)</p>
+        <p><strong>Explanation:</strong> Aggregates count by indoor status, revealing distribution.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Group markets by the number of nutrition programs they accept (count semicolons in FNAP +1).
+            <strong>Exercise:</strong> Group by derived state (from address) and count markets per state.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 14 -->
+<!-- SLIDE 14: DQL Advanced - JOIN (Self-Join Example) -->
 <div class="slide-container" id="slide14">
-    <h2 class="slide-title">Advanced DQL: Compare Coordinates (Self-Join)</h2>
+    <h2 class="slide-title">Advanced DQL: Compare Coordinates</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> m1.listing_name, m2.listing_name 
-<span class="sql-k">FROM</span> markets m1 <span class="sql-k">JOIN</span> markets m2 
-  <span class="sql-k">ON</span> m1.listing_id < m2.listing_id 
-<span class="sql-k">WHERE</span> ABS(m1.location_y - m2.location_y) < 0.1;
+SELECT m1.listing_name, m2.listing_name  
+FROM markets m1 JOIN markets m2 ON m1.listing_id < m2.listing_id  
+WHERE ABS(m1.location_y - m2.location_y) < 0.1;
         </div>
-        <p><strong>Explanation:</strong> Finds pairs of markets close in latitude (simple proxy for nearby).</p>
+        <p>RA: π_m1.listing_name, m2.listing_name (ρ_m1 (markets) ⋈m1.listing_id < m2.listing_id ρ_m2 (markets) σ|m1.location_y - m2.location_y| < 0.1)</p>
+        <p><strong>Explanation:</strong> Self-join to find markets with similar latitudes (proxy for proximity).</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Modify to find markets within 0.2 degrees latitude AND longitude of each other.
+            <strong>Exercise:</strong> Extend to include longitude difference < 0.1 for better approximation.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 15 -->
+<!-- SLIDE 15: DQL Advanced - Subquery -->
 <div class="slide-container" id="slide15">
-    <h2 class="slide-title">Advanced DQL: Markets Updated in 2026 (Subquery)</h2>
+    <h2 class="slide-title">Advanced DQL: Markets Updated in 2026</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> listing_name 
-<span class="sql-k">FROM</span> markets 
-<span class="sql-k">WHERE</span> update_time <span class="sql-k">IN</span> (
-    <span class="sql-k">SELECT</span> update_time 
-    <span class="sql-k">FROM</span> markets 
-    <span class="sql-k">WHERE</span> strftime('%Y', update_time) = '2026'
-);
+SELECT listing_name FROM markets  
+WHERE update_time IN (SELECT update_time FROM markets WHERE strftime('%Y', update_time) = '2026');
         </div>
-        <p><strong>Explanation:</strong> Uses subquery to find records from the same update batch as 2026 entries.</p>
+        <p>RA: π_listing_name (σ_update_time ∈ (π_update_time (σ_year(update_time) = '2026' (markets))) (markets))</p>
+        <p><strong>Explanation:</strong> Subquery identifies 2026 updates, main query finds matching timestamps.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Find markets whose update_time is earlier than the most recent update_time in the table.
+            <strong>Exercise:</strong> Use subquery to find markets with more programs than average (parse FNAP length).
         </div>
     </div>
 </div>
 
-<!-- SLIDE 16 -->
+<!-- SLIDE 16: DQL Advanced - UNION -->
 <div class="slide-container" id="slide16">
-    <h2 class="slide-title">Advanced DQL: Combine Queries (UNION)</h2>
+    <h2 class="slide-title">Advanced DQL: Combine Queries</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">SELECT</span> listing_name 
-<span class="sql-k">FROM</span> markets 
-<span class="sql-k">WHERE</span> FNAP <span class="sql-k">LIKE</span> '%SNAP%' 
-<span class="sql-k">UNION</span> 
-<span class="sql-k">SELECT</span> listing_name 
-<span class="sql-k">FROM</span> markets 
-<span class="sql-k">WHERE</span> FNAP <span class="sql-k">LIKE</span> '%WIC%';
+SELECT listing_name FROM markets WHERE FNAP LIKE '%SNAP%'  
+UNION  
+SELECT listing_name FROM markets WHERE FNAP LIKE '%WIC%';
         </div>
-        <p><strong>Explanation:</strong> Gets distinct list of markets accepting either SNAP or WIC.</p>
+        <p>RA: π_listing_name (σ_FNAP contains 'SNAP' (markets)) ∪ π_listing_name (σ_FNAP contains 'WIC' (markets))</p>
+        <p><strong>Explanation:</strong> Combines markets accepting SNAP or WIC, removing duplicates.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Use UNION ALL (with duplicates) to see how many markets accept both programs (count overlaps).
+            <strong>Exercise:</strong> Use UNION ALL to allow duplicates, then count overlaps for markets accepting both.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 17 -->
+<!-- SLIDE 17: DML Basic - INSERT -->
 <div class="slide-container" id="slide17">
     <h2 class="slide-title">Basic DML: Insert New Market</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">INSERT INTO</span> markets (listing_id, listing_name, location_address) 
-<span class="sql-k">VALUES</span> (999999, 'New Test Market', '123 Test St, Test City, CA 12345');
+INSERT INTO markets (listing_id, listing_name, location_address)  
+VALUES (999999, 'New Test Market', '123 Test St, Test City, CA 12345');
         </div>
-        <p><strong>Explanation:</strong> Adds a brand-new market record.</p>
+        <p>RA: markets ∪ new_tuple</p>
+        <p><strong>Explanation:</strong> Adds new data; auto-increments if PK is AUTOINCREMENT.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Insert a market that accepts SNAP, WIC, and has "Organic" in specialproductionmethods.
+            <strong>Exercise:</strong> Insert a market at coordinates (38.937, -104.815) with FNAP 'SNAP;'.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 18 -->
+<!-- SLIDE 18: DML Intermediate - UPDATE -->
 <div class="slide-container" id="slide18">
     <h2 class="slide-title">Intermediate DML: Update Field</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">UPDATE</span> markets 
-<span class="sql-k">SET</span> state = 'CO' 
-<span class="sql-k">WHERE</span> location_address <span class="sql-k">LIKE</span> '%Colorado%';
+UPDATE markets SET state = 'CO' WHERE location_address LIKE '%Colorado%';
         </div>
-        <p><strong>Explanation:</strong> Standardizes state code based on address string.</p>
+        <p>RA: Replace tuples in σ_condition (markets)</p>
+        <p><strong>Explanation:</strong> Bulk updates derived fields based on patterns.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Set a flag column <code>accepts_ebt</code> = 1 wherever FNAP contains 'SNAP' or 'EBT'.
+            <strong>Exercise:</strong> Update organic_flag = 1 for all with 'Organic' in specialproductionmethods.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 19 -->
+<!-- SLIDE 19: DML Advanced - DELETE with Condition -->
 <div class="slide-container" id="slide19">
     <h2 class="slide-title">Advanced DML: Delete Old Records</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">DELETE FROM</span> markets 
-<span class="sql-k">WHERE</span> strftime('%Y', update_time) < '2020';
+DELETE FROM markets WHERE strftime('%Y', update_time) < '2020';
         </div>
-        <p><strong>Explanation:</strong> Cleans out outdated market listings.</p>
+        <p>RA: markets - σ_year(update_time) < '2020' (markets)</p>
+        <p><strong>Explanation:</strong> Removes stale data based on date parsing.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Delete all test markets (listing_id > 900000) that you added earlier.
+            <strong>Exercise:</strong> Delete markets without coordinates (location_x IS NULL).
         </div>
     </div>
 </div>
 
-<!-- SLIDE 20 -->
+<!-- SLIDE 20: DML Advanced - Transaction (Batch Operations) -->
 <div class="slide-container" id="slide20">
     <h2 class="slide-title">Advanced DML: Transactional Updates</h2>
     <div class="content-area">
         <div class="code-block">
-<span class="sql-k">BEGIN TRANSACTION</span>;  
-<span class="sql-k">UPDATE</span> markets 
-<span class="sql-k">SET</span> organic_flag = 1 
-<span class="sql-k">WHERE</span> specialproductionmethods <span class="sql-k">LIKE</span> '%Organic%';  
-<span class="sql-k">COMMIT</span>;
+BEGIN TRANSACTION;  
+UPDATE markets SET organic_flag = 1 WHERE specialproductionmethods LIKE '%Organic%';  
+COMMIT;
         </div>
-        <p><strong>Explanation:</strong> Ensures all updates succeed or none are applied (atomicity).</p>
+        <p>RA: Atomic modification set</p>
+        <p><strong>Explanation:</strong> Ensures consistency for multi-step ops; rollback if error.</p>
         <div class="exercise">
-            <strong>Exercise:</strong> Wrap an UPDATE (set state from address) and a DELETE (remove incomplete records) in a transaction.
+            <strong>Exercise:</strong> Transaction: UPDATE state from address, DELETE invalid latitudes.
         </div>
     </div>
 </div>
 
-<!-- SLIDE 21 -->
+<!-- SLIDE 21: Conclusion & Best Practices -->
 <div class="slide-container dark-slide" id="slide21">
     <div class="title-layout">
         <h1 class="export-title">Thank You!</h1>
-        <p class="subtitle">Wrapping Up</p>
-        <ul class="bullet-list" style="margin-top: 40px; font-size: 24px;">
+        <p class="subtitle">Next: Aggregations in Chapter 6</p>
+        <ul class="bullet-list">
             <li>DDL: Schema Management</li>
-            <li>DQL: Data Querying with Relational Algebra</li>
+            <li>DQL: Data Querying with RA</li>
             <li>DML: Data Manipulation</li>
-            <li>Best Practices: Use indexes, transactions; parse multi-value fields carefully; validate coordinates.</li>
+            <li>Best Practices: Use indexes, transactions; visualize with diagrams for better data comprehension.</li>
         </ul>
-        <p style="margin-top: 40px; font-size: 22px;">Practice these queries on the real USDA dataset!</p>
+    </div>
+</div>
+
+<!-- SLIDE 22: Haversine Distance Intro (New) -->
+<div class="slide-container" id="slide22">
+    <h2 class="slide-title">Advanced DQL: Haversine Distance Formula</h2>
+    <div class="content-area">
+        <div class="code-block">
+SELECT m1.listing_name, m2.listing_name,
+  6371 * 2 * ASIN(SQRT(
+    POW(SIN((RADIANS(m2.location_y) - RADIANS(m1.location_y)) / 2), 2) +
+    COS(RADIANS(m1.location_y)) * COS(RADIANS(m2.location_y)) *
+    POW(SIN((RADIANS(m2.location_x) - RADIANS(m1.location_x)) / 2), 2)
+  )) AS distance_km
+FROM markets m1 JOIN markets m2 ON m1.listing_id < m2.listing_id
+WHERE distance_km < 50
+ORDER BY distance_km;
+        </div>
+        <p><strong>Explanation:</strong> Calculates great-circle distance between markets in km using Haversine.</p>
+    </div>
+</div>
+
+<!-- SLIDE 23: Haversine Exercise (New) -->
+<div class="slide-container" id="slide23">
+    <h2 class="slide-title">Haversine Exercise: Find Nearby Markets</h2>
+    <div class="content-area">
+        <p><strong>Explanation:</strong> Use Haversine to find markets within 10 km of a reference market (e.g., listing_id = 300002).</p>
+        <div class="exercise">
+            <strong>Exercise:</strong> Modify the query to find all markets within 100 km of Colorado Farm and Art Market (lat 38.9377160, long -104.81468).
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 24: Challenging Query - Rank by Programs (New) -->
+<div class="slide-container" id="slide24">
+    <h2 class="slide-title">Challenging DQL: Rank by Number of Programs</h2>
+    <div class="content-area">
+        <div class="code-block">
+SELECT listing_name, FNAP,
+  LENGTH(FNAP) - LENGTH(REPLACE(FNAP, ';', '')) + 1 AS num_programs
+FROM markets
+ORDER BY num_programs DESC
+LIMIT 10;
+        </div>
+        <p><strong>Explanation:</strong> Counts semicolons in FNAP to estimate number of programs, ranks markets.</p>
+        <div class="exercise">
+            <strong>Exercise:</strong> Filter for only markets with num_programs > 2 and 'SNAP' included.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 25: Challenging Query - Year-over-Year (New) -->
+<div class="slide-container" id="slide25">
+    <h2 class="slide-title">Challenging DQL: Markets Updated by Year</h2>
+    <div class="content-area">
+        <div class="code-block">
+SELECT strftime('%Y', update_time) AS year, COUNT(*) AS updates
+FROM markets
+GROUP BY year
+ORDER BY year DESC;
+        </div>
+        <p><strong>Explanation:</strong> Aggregates updates per year, showing data freshness.</p>
+        <div class="exercise">
+            <strong>Exercise:</strong> Find average location_y (latitude) per update year to see geographic trends.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 26: Final Conclusion (Extended) -->
+<div class="slide-container dark-slide" id="slide26">
+    <div class="title-layout">
+        <h1 class="export-title">Thank You!</h1>
+        <p class="subtitle">Wrapping Up with Challenges</p>
+        <ul class="bullet-list">
+            <li>Master Haversine for spatial analysis</li>
+            <li>Parse multi-value fields creatively</li>
+            <li>Rank, aggregate, join for insights</li>
+            <li>Best Practices: Test queries on real data; use transactions for safety.</li>
+        </ul>
     </div>
 </div>
 
@@ -553,11 +618,11 @@
     <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
     <button class="nav-btn" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
 </div>
-<div class="page-num" id="pageNum">1 / 21</div>
+<div class="page-num" id="pageNum">1 / 26</div>
 
 <script>
     let current = 1;
-    const total = 21;
+    const total = 26;
 
     function update() {
         document.querySelectorAll('.slide-container').forEach(s => s.classList.remove('active'));
